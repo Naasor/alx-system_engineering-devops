@@ -1,7 +1,6 @@
 # kill_process.pp
-
-exec { 'killmenow_process':
-  command     => 'pkill killmenow',
-  refreshonly => true,
-  onlyif      => 'pgrep killmenow',
+# script to execute a command using puppet
+exec { 'killmenow':
+  command => 'pkill killmenow',
+  path    => '/usr/bin/'
 }
