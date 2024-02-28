@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
-# Restart an apache 2 server in our docker container
-service apache2 restart
+# Run Apache on the holbertonschool/265-0 Docker container.
+echo "holbertonschool/265-0 localhost" >> /etc/apache2.conf
+service apache2 start
