@@ -1,41 +1,38 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2154
-# Configures a new ubuntu machine by installing
-# Nginx where it should be listening on port 80 (default)
-# Setup a page that will return 404
+# Installs Nginx with the following configurations:
+#+    Listens on port 80.
+#+    Returns a page containing "Holberton School" when queried
+#+     at the root with a curl GET request.
+#+    Configures /redirect_me as a "301 Moved Permanently".
+#+    Includes a custom 404 page containing "Ceci n'est pas une page".
+#+    Contains a custom HTTP header named X-Served-By.
+#+    The value of the HTTP header is the hostname of the running server.
 
-echo -e "Updating and installing Nginx.\n"
-sudo apt-get update -y -qq && \
-	 sudo apt-get install nginx -y
+sudo apt-get update -y -qq
+sudo apt-get install nginx -y
 
-sudo sed -i "15i \\\tadd_header X-Served-By $HOSTNAME;" /etc/nginx/nginx.conf
+mkdir -p /var/www/html
+touch /var/www/html/index.html
+echo "Hello World!" > /var/www/html/index.html
+touch /var/www/html/404.html
+echo "Ceci n'est pas une page" > /var/www/html/404.html
 
-echo -e "\nStart of Nginx Services.\n"
+printf %s "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    add_header X-Served-By $HOSTNAME;
+    root   /var/www/html;
+    index  index.html index.htm;
 
-# starting nginx service
-sudo service nginx start
+    location /redirect_me {
+        return 301 http://www.youtube.com/watch?v=QH2-TGUlwu4 permanent/;
+    }
 
-# allowing nginx on firewall
-sudo ufw allow 'Nginx HTTP'
+    error_page 404 /404.html;
+    location /404 {
+      root /var/www/html;
+      internal;
+    }
+}" > /etc/nginx/sites-available/default
 
-# Give the user ownership to website files for easy editing
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
-
-# Backup default index
-cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
-
-# Creating new index
-echo -e "Hello World!" > /var/www/html/index.nginx-debian.html
-
-# Setting up /redirect_me to a youtube video
-sudo sed -i '24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
-
-# Set up a 404 page
-echo "Ceci n'est pas une page" >> /var/www/html/error_404.html
-sudo sed -i '25i\	error_page 404 /error_404.html;' /etc/nginx/sites-available/default
-
-# Restarting nginx
-sudo service nginx restart
-
-echo -e "\nCompleted.\n"
+service nginx restart
