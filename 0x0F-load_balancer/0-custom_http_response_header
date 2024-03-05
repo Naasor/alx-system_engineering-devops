@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disabled=2154
 # Configures a new ubuntu machine by installing
 # Nginx where it should be listening on port 80 (default)
 # Setup a page that will return 404
