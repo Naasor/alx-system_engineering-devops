@@ -1,23 +1,42 @@
 #!/usr/bin/env bash
-# shellcheck disabled=2154
 # Configure HAProxy load balancer server
 
-sudo apt-get -y install software-properties-common
-sudo add-apt-repository -y ppa:vbernat/haproxy-1.8
-sudo apt-get -y update
-sudo apt-get -y install haproxy=1.8.\*
+apt-get install -y software-properties-common
+add-apt-repository -y ppa:vbernat/haproxy-1.8
+apt-get update
+apt-get install -y haproxy=1.8.\*
 
 echo "ENABLED=1" >> /etc/default/haproxy
 mv /etc/haproxy/haproxy.cfg{,.original}
 touch /etc/haproxy/haproxy.cfg
 
-listen sunhub
-       "bind *:80
-        mode http
-        default_backend web-backend
-    backend web-backend
-        balance roundrobin
-        server 487275-web-01 100.25.188.244
-        server 487275-web-02 34.299.55.60" >> /etc/haproxy/haproxy.cfg
+printf %s "global
+    log 127.0.0.1 local0 notice
+    maxconn 2000
+    user haproxy
+    group haproxy
 
-service haproxy restart
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    option redispatch
+    timeout connect  5000
+    timeout client  10000
+    timeout server  10000
+
+listen sunhub
+    bind 0.0.0.0:80
+    mode http
+    stats enable
+    stats uri /haproxy?stats
+    balance roundrobin
+    option httpclose
+    option forwardfor
+    server 487275-web-01 100.25.188.244:80 check
+    server 487275-web-02 34.229.55.60:80 check
+" >> /etc/haproxy/haproxy.cfg
+
+service haproxy start
