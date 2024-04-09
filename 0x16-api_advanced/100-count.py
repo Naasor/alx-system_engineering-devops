@@ -8,6 +8,8 @@ import operator
 
 
 def count_words(subreddit, word_list=[], word_dict={}, after=None):
+    """ function that quueries the Reddit API"""
+
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) Apple' +
         'WebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
