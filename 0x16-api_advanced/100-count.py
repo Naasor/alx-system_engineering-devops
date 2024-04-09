@@ -44,5 +44,5 @@ def count_words(subreddit, word_list=[], word_dict={}, after=None):
                     print("{:}: {:}".format(item[0], item[1]))
             return
         return count_words(subreddit, word_list, word_dict, after)
-    else Exception:
+    else:
         return
