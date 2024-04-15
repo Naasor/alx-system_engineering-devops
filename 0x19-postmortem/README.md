@@ -1,7 +1,7 @@
 # POSTMOTERM 
 * Load Balancer Apache Outage - A Tale of Misdirection on April 3rd, 2024
 
-![](https://twitter.com/devopsreact/status/834887829486399488)
+<a href="{https://twitter.com/devopsreact/status/834887829486399488}"/></a>
 
 ## The Drama Unfolds: 🎭
 - **Duration:** April 3rd, 2024, 14:35 UTC to April 3rd, 2024, 16:50 UTC
